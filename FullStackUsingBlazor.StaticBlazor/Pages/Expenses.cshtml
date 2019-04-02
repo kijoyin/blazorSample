@@ -1,0 +1,47 @@
+﻿@page "/expenses"
+@using FullStackUsingBlazor.Shared
+@using FullStackUsingBlazor.Shared.Resources;
+
+@inject IJSRuntime JS;
+@inject HttpClient Http
+
+<h1>Expenses</h1>
+
+@if (expenses == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var expense in expenses)
+            {
+                <tr>
+                    <td>@expense.Spendate.ToShortDateString()</td>
+                    <td>@expense.Title</td>
+                    <td>@expense.Description</td>
+                    <td>@expense.Amount.VerySpecialFormatting()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+@functions {
+    Expense[] expenses;
+
+    protected override async Task OnInitAsync()
+    {
+        expenses = await Http.GetJsonAsync<Expense[]>("https://localhost:44374/api/expenses");
+    }
+}
